@@ -1,0 +1,35 @@
+from typing import Optional
+from sqlalchemy.orm import Session
+from src.app.auth.security import verify_password, get_password_hash
+from src.app.base.crud_base import CRUDBase
+
+from .models import User
+from .schemas import UserCreate, UserUpdate
+
+
+class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
+    def get_by_email(self, db_session: Session, *, email: str) -> Optional[User]:
+        return db_session.query(User).filter(User.email == email).first()
+
+    def create(self, db_session: Session, *, obj_in: UserCreate, **kwargs) -> User:
+        db_obj = User(
+            username=obj_in.username,
+            email=obj_in.email,
+            password=get_password_hash(obj_in.password),
+            first_name=obj_in.first_name,
+        )
+        db_session.add(db_obj)
+        db_session.commit()
+        db_session.refresh(db_obj)
+        return db_obj
+
+    def authenticate(self, db_session: Session, *, username: str, password: str) -> Optional[User]:
+        user = self.get_by_email(db_session, email=username)
+        if not user:
+            return None
+        if not verify_password(password, user.password):
+            return None
+        return user
+
+
+user = CRUDUser(User)
