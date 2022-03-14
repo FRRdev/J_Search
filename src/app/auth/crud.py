@@ -7,7 +7,7 @@ class CRUDVerify:
         return db_session.query(Verification).filter(Verification.link == uuid).first()
 
     def create(self, db_session: Session, user: int) -> Verification:
-        db_obj = Verification(user_id=user)
+        db_obj = Verification(user=user)
         db_session.add(db_obj)
         db_session.commit()
         db_session.refresh(db_obj)

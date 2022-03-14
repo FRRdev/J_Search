@@ -17,7 +17,7 @@ from src.app.base.utils.db import get_db
 from .schemas import TokenPayload
 from src.app.user import crud, schemas
 from .send_email import send_new_account_email
-from .service import auth_verify
+from .crud import auth_verify
 
 password_reset_jwt_subject = "preset"
 reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/v1/login/access-token")
@@ -59,9 +59,9 @@ def verify_password_reset_token(token: str) -> Optional[str]:
         return None
 
 
-async def registration_user(new_user: schemas.UserCreateInRegistration, db: Session):
+def registration_user(new_user: schemas.UserCreateInRegistration, db: Session):
     """Регистрация пользователя"""
-    if crud.user.get_by_email(db, email=new_user.email):
+    if crud.user.get_by_username_email(db, username=new_user.username, email=new_user.email):
         return True
     else:
         user = crud.user.create(db, obj_in=new_user)
@@ -70,11 +70,11 @@ async def registration_user(new_user: schemas.UserCreateInRegistration, db: Sess
         return False
 
 
-async def verify_registration_user(uuid: VerificationInDB, db: Session):
+def verify_registration_user(uuid: VerificationInDB, db: Session):
     """ Подтверждение email пользователя """
     verify = auth_verify.get(db, uuid.link)
     if verify:
-        user = crud.user.get(db, verify.user_id)
+        user = crud.user.get(db, verify.user)
         crud.user.update(db, db_obj=user, obj_in=schemas.UserUpdate(**{"is_active": "true"}))
         auth_verify.remove(db, uuid.link)
         return True
