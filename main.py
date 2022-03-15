@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 
 from src.config import settings
 from src.db.session import Sessionlocal
@@ -25,6 +26,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 
 
 @app.middleware("http")
@@ -37,5 +39,5 @@ async def db_session_middleware(request: Request, call_next):
         request.state.db.close()
     return response
 
-app.include_router(routers.api_router, prefix=settings.API_V1_STR)
 
+app.include_router(routers.api_router, prefix=settings.API_V1_STR)

@@ -3,12 +3,14 @@ from datetime import timedelta
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from starlette.responses import JSONResponse
 
 from src.config import settings
 from src.app.base.utils.db import get_db
 
 from src.app.user import schemas, crud
 
+from src.config.social_app import social_auth
 from .schemas import Token, Msg, VerificationInDB
 from .jwt import create_access_token
 from .security import get_password_hash
@@ -101,3 +103,21 @@ async def reset_password(token: str = Body(...), new_password: str = Body(...), 
     db.add(user)
     db.commit()
     return {"msg": "Password updated successfully"}
+
+
+@auth_router.route('/')
+async def login(request):
+    github = social_auth.create_client('github')
+    redirect_uri = 'http://localhost:8000/api/v1/auth/github_login'
+    return await github.authorize_redirect(request, redirect_uri)
+
+
+@auth_router.route('/github_login')
+async def authorize(request):
+    print('goof')
+    token = await social_auth.github.authorize_access_token(request)
+    resp = await social_auth.github.get('user', token=token)
+    print('****************************')
+    profile = resp.json()
+    print(profile)
+    return JSONResponse(profile)

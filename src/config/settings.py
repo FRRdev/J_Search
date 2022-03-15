@@ -40,6 +40,8 @@ EMAIL_TEMPLATES_DIR = "src/email-templates/build"
 EMAILS_ENABLED = SMTP_HOST and SMTP_PORT and EMAILS_FROM_NAME
 EMAIL_TEST_USER = 'test@maio.ru'
 
+
+
 #
 # # Email
 # SMTP_TLS = os.environ.get("SMTP_TLS")
