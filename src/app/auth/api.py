@@ -11,7 +11,7 @@ from src.app.base.utils.db import get_db
 from src.app.user import schemas, crud
 
 from src.config.social_app import social_auth
-from .schemas import Token, Msg, VerificationInDB
+from .schemas import Token, Msg, VerificationOut
 from .jwt import create_access_token
 from .security import get_password_hash
 from .send_email import send_reset_password_email
@@ -59,7 +59,7 @@ async def user_registration(new_user: schemas.UserCreateInRegistration, db: Sess
 
 
 @auth_router.post("/confirm-email", response_model=Msg)
-async def confirm_email(uuid: VerificationInDB, db: Session = Depends(get_db)):
+async def confirm_email(uuid: VerificationOut, db: Session = Depends(get_db)):
     if verify_registration_user(uuid, db):
         return {"msg": "Success verify email"}
     else:
@@ -76,7 +76,7 @@ async def recover_password(email: str, db: Session = Depends(get_db)):
             status_code=404,
             detail="The user with this username does not exist in the system.",
         )
-    password_reset_token = generate_password_reset_token(email=email)
+    password_reset_token = generate_password_reset_token(email)
     send_reset_password_email(
         email_to=user.email, email=email, token=password_reset_token
     )
@@ -84,7 +84,9 @@ async def recover_password(email: str, db: Session = Depends(get_db)):
 
 
 @auth_router.post("/reset-password/", response_model=Msg)
-async def reset_password(token: str = Body(...), new_password: str = Body(...), db: Session = Depends(get_db)):
+async def reset_password(
+        token: str = Body(...), new_password: str = Body(...), db: Session = Depends(get_db)
+):
     """ Reset password
     """
     email = verify_password_reset_token(token)
@@ -99,9 +101,7 @@ async def reset_password(token: str = Body(...), new_password: str = Body(...), 
     elif not crud.user.is_active(user):
         raise HTTPException(status_code=400, detail="Inactive user")
     hashed_password = get_password_hash(new_password)
-    user.password = hashed_password
-    db.add(user)
-    db.commit()
+    crud.user.change_password(db, user, hashed_password)
     return {"msg": "Password updated successfully"}
 
 

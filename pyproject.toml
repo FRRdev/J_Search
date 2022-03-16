@@ -16,6 +16,8 @@ psycopg2-binary = "^2.9.3"
 Authlib = "^1.0.0"
 httpx = "^0.22.0"
 oauth = "^1.0.1"
+base = "^1.0.4"
+username = "^2.1.0"
 
 [tool.poetry.dev-dependencies]
 

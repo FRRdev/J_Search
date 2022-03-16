@@ -27,13 +27,9 @@ class VerificationCreate(BaseModel):
     user_id: int
 
 
-class VerificationInDB(BaseModel):
-    """ Схема для проверки email при регистрации
-    """
-    link: UUID
-
-
 class VerificationOut(BaseModel):
     """ Схема для проверки email при регистрации
     """
     link: UUID
+
+

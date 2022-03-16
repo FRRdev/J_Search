@@ -7,7 +7,7 @@ from .models import User
 from .schemas import UserCreate, UserUpdate
 
 
-class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
+class UserCRUD(CRUDBase[User, UserCreate, UserUpdate]):
     def get_by_email(self, db_session: Session, *, email: str) -> Optional[User]:
         return db_session.query(self.model).filter(self.model.email == email).first()
 
@@ -17,12 +17,12 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def get_by_username_email(self, db_session: Session, *, username: str, email: str) -> Optional[User]:
         return self.exists(db_session, username=username, email=email)
 
-    def create(self, db_session: Session, *, obj_in: UserCreate, **kwargs) -> User:
+    def create(self, db_session: Session, *args, schema: UserCreate, **kwargs) -> User:
         db_obj = User(
-            username=obj_in.username,
-            email=obj_in.email,
-            password=get_password_hash(obj_in.password),
-            first_name=obj_in.first_name,
+            username=schema.username,
+            email=schema.email,
+            password=get_password_hash(schema.password),
+            first_name=schema.first_name,
         )
         db_session.add(db_obj)
         db_session.commit()
@@ -37,11 +37,16 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             return None
         return user
 
-    def is_active(self, user: User) -> bool:
-        return user.is_active
+    def is_active(self, obj: User) -> bool:
+        return obj.is_active
 
-    def is_superuser(self, user: User) -> bool:
-        return user.is_superuser
+    def is_superuser(self, obj: User) -> bool:
+        return obj.is_superuser
+
+    def change_password(self, db_session: Session, obj: User, hashed_password: str):
+        obj.password = hashed_password
+        db_session.add(user)
+        db_session.commit()
 
 
-user = CRUDUser(User)
+user = UserCRUD(User)

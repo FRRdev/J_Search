@@ -1,23 +1,12 @@
-from sqlalchemy.orm import Session
 from .models import Verification
+from .schemas import VerificationOut, VerificationCreate
+from ..base.crud_base import CRUDBase
 
 
-class CRUDVerify:
-    def get(self, db_session: Session, uuid: str) -> Verification:
-        return db_session.query(Verification).filter(Verification.link == uuid).first()
-
-    def create(self, db_session: Session, user: int) -> Verification:
-        db_obj = Verification(user=user)
-        db_session.add(db_obj)
-        db_session.commit()
-        db_session.refresh(db_obj)
-        return db_obj
-
-    def remove(self, db_session: Session, uuid: str) -> Verification:
-        obj = db_session.query(Verification).filter(Verification.link == uuid).first()
-        db_session.delete(obj)
-        db_session.commit()
-        return obj
+class VerifyCRUD(CRUDBase[Verification, VerificationCreate, VerificationOut]):
+    """Создание и удвление ссылок подтверждения
+    """
+    pass
 
 
-auth_verify = CRUDVerify()
+auth_verify = VerifyCRUD(Verification)
