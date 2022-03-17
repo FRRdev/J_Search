@@ -27,7 +27,7 @@ def main():
             is_superuser=True,
             is_active=True
         )
-        await user.create_superuser(db_session, obj_in=user_in)
+        await user.create_superuser(db_session, schema=user_in)
         mess = typer.style('Success', fg=typer.colors.GREEN)
     else:
         mess = typer.style('Error, user existing', fg=typer.colors.RED)

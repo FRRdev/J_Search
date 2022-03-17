@@ -19,6 +19,7 @@ oauth = "^1.0.1"
 base = "^1.0.4"
 username = "^2.1.0"
 typer = "^0.4.0"
+social = "^0.1.dev3"
 
 [tool.poetry.dev-dependencies]
 
