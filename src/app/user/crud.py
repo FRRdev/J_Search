@@ -4,7 +4,7 @@ from src.app.auth.security import verify_password, get_password_hash
 from src.app.base.crud_base import CRUDBase
 
 from .models import User
-from .schemas import UserCreate, UserUpdate
+from .schemas import UserCreate, UserUpdate, UserCreateInRegistration
 
 
 class UserCRUD(CRUDBase[User, UserCreate, UserUpdate]):
@@ -23,6 +23,20 @@ class UserCRUD(CRUDBase[User, UserCreate, UserUpdate]):
             email=schema.email,
             password=get_password_hash(schema.password),
             first_name=schema.first_name,
+        )
+        db_session.add(db_obj)
+        db_session.commit()
+        db_session.refresh(db_obj)
+        return db_obj
+
+    def create_superuser(self, db_session: Session, *args, obj_in: UserCreate) -> User:
+        db_obj = User(
+            username=obj_in.username,
+            email=obj_in.email,
+            password=get_password_hash(obj_in.password),
+            first_name=obj_in.first_name,
+            is_superuser=obj_in.is_superuser,
+            is_active=obj_in.is_active,
         )
         db_session.add(db_obj)
         db_session.commit()

@@ -24,16 +24,17 @@ BACKEND_CORS_ORIGINS = [
 ]
 
 SQLALCHEMY_DATABASE_URI = (
-    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
+     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
 )
 
-USERS_OPEN_REGISTRATION = True
 
-# DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
+# SQLALCHEMY_DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
 #                f'{os.environ.get("POSTGRES_PASSWORD")}@' \
 #                f'{os.environ.get("POSTGRES_HOST")}:5432/' \
 #                f'{os.environ.get("POSTGRES_DB")}'
-#
+
+USERS_OPEN_REGISTRATION = True
+
 EMAILS_FROM_NAME = PROJECT_NAME
 EMAIL_RESET_TOKEN_EXPIRE_HOURS = 48
 EMAIL_TEMPLATES_DIR = "src/email-templates/build"
