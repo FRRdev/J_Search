@@ -3,6 +3,7 @@ from datetime import timedelta
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from fastapi import BackgroundTasks
 from starlette.responses import JSONResponse
 
 from src.config import settings
@@ -48,10 +49,10 @@ async def login_access_token(
 
 
 @auth_router.post("/registration", response_model=Msg)
-async def user_registration(new_user: schemas.UserCreateInRegistration, db: Session = Depends(get_db)):
+async def user_registration(new_user: schemas.UserCreateInRegistration, task: BackgroundTasks):
     """ Регистрация пользователя
     """
-    user = registration_user(new_user, db)
+    user = await registration_user(new_user, task)
     if user:
         raise HTTPException(status_code=400, detail="User already exists")
     else:
@@ -59,8 +60,8 @@ async def user_registration(new_user: schemas.UserCreateInRegistration, db: Sess
 
 
 @auth_router.post("/confirm-email", response_model=Msg)
-async def confirm_email(uuid: VerificationOut, db: Session = Depends(get_db)):
-    if verify_registration_user(uuid, db):
+async def confirm_email(uuid: VerificationOut):
+    if await verify_registration_user(uuid):
         return {"msg": "Success verify email"}
     else:
         raise HTTPException(status_code=404, detail="Not found")

@@ -1,36 +1,34 @@
-from sqlalchemy import Column, String, Integer, DateTime, Boolean, sql, ForeignKey
-from sqlalchemy.orm import relationship
-
-from src.db.session import Base
+from tortoise import fields, models
 
 
-class User(Base):
-    """ Model user """
-
-    __tablename__ = 'user_user'
-
-    username = Column(String, unique=True)
-    email = Column(String, unique=True)
-    password = Column(String)
-    first_name = Column(String(150))
-    last_name = Column(String(150))
-    date_join = Column(DateTime(timezone=True), server_default=sql.func.now())
-    last_login = Column(DateTime)
-    is_active = Column(Boolean, default=False)
-    is_staff = Column(Boolean, default=False)
-    is_superuser = Column(Boolean, default=False)
-    avatar = Column(String)
 
 
-class SocialAccount(Base):
+class User(models.Model):
+    """ Model user
+    """
+    username = fields.CharField(max_length=100, unique=True)
+    email = fields.CharField(max_length=100, unique=True)
+    password = fields.CharField(max_length=100)
+    first_name = fields.CharField(max_length=100)
+    last_name = fields.CharField(max_length=100, null=True)
+    date_join = fields.DatetimeField(auto_now_add=True)
+    last_login = fields.DatetimeField(null=True)
+    is_active = fields.BooleanField(default=False)
+    is_staff = fields.BooleanField(default=False)
+    is_superuser = fields.BooleanField(default=False)
+    avatar = fields.CharField(max_length=100, null=True)
+
+    # async def save(self, *args, **kwargs) -> None:
+    #     self.password = get_password_hash(self.password)
+    #     await super().create(*args, **kwargs)
+
+
+class SocialAccount(models.Model):
     """ Model social account
     """
-    __tablename__ = 'user_social_account'
-
-    account_id = Column(Integer)
-    account_url = Column(String)
-    account_login = Column(String)
-    account_name = Column(String)
-    provider = Column(String)
-    user_id = Column(Integer, ForeignKey('user_user.id', ondelete='CASCADE'))
-    user = relationship("User", backref="social_account")
+    account_id = fields.IntField()
+    account_url = fields.CharField(max_length=500)
+    account_login = fields.CharField(max_length=100)
+    account_name = fields.CharField(max_length=100)
+    provider = fields.CharField(max_length=100)
+    user = fields.ForeignKeyField('models.User', related_name='social_accounts')

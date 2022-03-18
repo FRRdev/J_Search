@@ -1,6 +1,9 @@
 from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr
+from tortoise.contrib.pydantic import pydantic_model_creator
+
+from .models import User
 
 
 class UserBase(BaseModel):
@@ -46,10 +49,10 @@ class UserUpdate(UserBaseInDB):
     password: Optional[str] = None
 
 
-class User(UserBaseInDB):
-    """ Additional properties to return via API
-    """
-    pass
+# class User(UserBaseInDB):
+#     """ Additional properties to return via API
+#     """
+#     pass
 
 
 class UserInDB(UserBaseInDB):
@@ -76,7 +79,13 @@ class UserPublic(UserBase):
     """ For public profile user
     """
     id: int
-    #social_account: List[SocialAccount] = None
+
+    # social_account: List[SocialAccount] = None
 
     class Config:
         orm_mode = True
+
+
+User_C_Pydantic = pydantic_model_creator(User, name='create_user', exclude_readonly=True,
+                                         exclude=('is_active', 'is_staff', 'is_superuser'))
+User_G_Pydantic = pydantic_model_creator(User, name='user')

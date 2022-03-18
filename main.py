@@ -7,11 +7,7 @@ from src.db.session import Sessionlocal
 
 from src.app import routers
 
-# from tortoise.contrib.fastapi import register_tortoise
-#
-# from src.config import settings
-# from src.app import routers
-
+from tortoise.contrib.fastapi import register_tortoise
 
 app = FastAPI(
     title="Useful",
@@ -41,3 +37,11 @@ async def db_session_middleware(request: Request, call_next):
 
 
 app.include_router(routers.api_router, prefix=settings.API_V1_STR)
+
+register_tortoise(
+    app,
+    db_url="postgres://postgres:Zahita183@localhost:5432/useful_test_tortoise",
+    modules={"models": ["src.app.user.models", "src.app.auth.models", "aerich.models"]},
+    generate_schemas=True,
+    add_exception_handlers=True,
+)

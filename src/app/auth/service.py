@@ -5,6 +5,11 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from typing import Optional
 
+from fastapi import BackgroundTasks
+from tortoise.expressions import Q
+
+from .models import Verification
+from src.app.user import models, service
 from src.config import settings
 from .schemas import VerificationOut, VerificationCreate
 from src.app.user import schemas, crud
@@ -14,24 +19,28 @@ from .crud import auth_verify
 password_reset_jwt_subject = "preset"
 
 
-def registration_user(new_user: schemas.UserCreateInRegistration, db: Session) -> bool:
+async def registration_user(new_user: schemas.UserCreateInRegistration, task: BackgroundTasks) -> bool:
     """Регистрация пользователя"""
-    if crud.user.get_by_username_email(db, username=new_user.username, email=new_user.email):
+    if await models.User.filter(Q(username=new_user.username) | Q(email=new_user.email)).exists():
         return True
     else:
-        user = crud.user.create(db, schema=new_user)
-        verify = auth_verify.create(db, schema=VerificationCreate(user_id=user.id))
-        send_new_account_email(new_user.email, new_user.username, new_user.password, verify.link)
+        user = await service.user_s.create_user(new_user)
+        verify = await Verification.create(user_id=user.id)
+        task.add_task(
+            send_new_account_email, new_user.email, new_user.username, new_user.password, verify.link
+        )
         return False
 
 
-def verify_registration_user(uuid: VerificationOut, db: Session) -> bool:
+async def verify_registration_user(uuid: VerificationOut) -> bool:
     """ Подтверждение email пользователя """
-    verify = auth_verify.get(db, link=uuid.link)
+    verify = await Verification.get(link=uuid.link).prefetch_related("user")
     if verify:
-        user = crud.user.get(db, id=verify.user_id)
-        crud.user.update(db, model=user, schema=schemas.UserUpdate(**{"is_active": "true"}))
-        auth_verify.remove(db, uuid.link)
+        return True
+        service.user_s.update(
+            schema=schemas.UserUpdate(**{"is_active": "true"}), id=verify.user.id
+        )
+        await Verification.filter(link=uuid.link).delete()
         return True
     else:
         return False
