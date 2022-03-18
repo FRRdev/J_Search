@@ -36,7 +36,6 @@ async def verify_registration_user(uuid: VerificationOut) -> bool:
     """ Подтверждение email пользователя """
     verify = await Verification.get(link=uuid.link).prefetch_related("user")
     if verify:
-        return True
         service.user_s.update(
             schema=schemas.UserUpdate(**{"is_active": "true"}), id=verify.user.id
         )
