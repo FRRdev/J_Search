@@ -1,6 +1,5 @@
 import jwt
 from jwt import InvalidTokenError
-from sqlalchemy.orm import Session
 
 from datetime import datetime, timedelta
 from typing import Optional
@@ -11,10 +10,9 @@ from tortoise.expressions import Q
 from .models import Verification
 from src.app.user import models, service
 from src.config import settings
-from .schemas import VerificationOut, VerificationCreate
+from .schemas import VerificationOut
 from src.app.user import schemas, crud
 from .send_email import send_new_account_email
-from .crud import auth_verify
 
 password_reset_jwt_subject = "preset"
 
@@ -36,7 +34,7 @@ async def verify_registration_user(uuid: VerificationOut) -> bool:
     """ Подтверждение email пользователя """
     verify = await Verification.get(link=uuid.link).prefetch_related("user")
     if verify:
-        service.user_s.update(
+        await service.user_s.update(
             schema=schemas.UserUpdate(**{"is_active": "true"}), id=verify.user.id
         )
         await Verification.filter(link=uuid.link).delete()

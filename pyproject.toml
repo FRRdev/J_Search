@@ -24,6 +24,7 @@ tortoise-orm = "^0.18.1"
 aerich = "^0.6.2"
 asyncpg = "^0.25.0"
 password = "^0.2"
+Avatar = "^0.1"
 
 [tool.poetry.dev-dependencies]
 
