@@ -1,8 +1,6 @@
 from tortoise import fields, models
 
 
-
-
 class User(models.Model):
     """ Model user
     """

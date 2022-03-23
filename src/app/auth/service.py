@@ -11,7 +11,7 @@ from .models import Verification
 from src.app.user import models, service
 from src.config import settings
 from .schemas import VerificationOut
-from src.app.user import schemas, crud
+from src.app.user import schemas
 from .send_email import send_new_account_email
 
 password_reset_jwt_subject = "preset"

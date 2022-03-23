@@ -32,6 +32,8 @@ DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
                f'{os.environ.get("POSTGRES_HOST")}:5432/' \
                f'{os.environ.get("POSTGRES_DB")}'
 
+DATABASE_URI_LOCAL = 'postgres://postgres:Zahita183@localhost:5432/useful_test_tortoise'
+
 USERS_OPEN_REGISTRATION = True
 
 EMAILS_FROM_NAME = PROJECT_NAME
