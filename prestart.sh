@@ -1,5 +1,6 @@
 #! /usr/bin/env bash
 
-sleep 10
+#sleep 10
 
-poetry run alembic upgrade head
+#poetry run alembic upgrade head
+aerich init-db

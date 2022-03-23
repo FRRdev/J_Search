@@ -1,10 +1,10 @@
 version: '3.7'
 
 services:
-  db:
-    container_name: useful-db
+  useful-db:
+    container_name: postgres-useful
     image: postgres:12
-    restart: always
+    restart: on-failure
     env_file:
       - ./.env.dev
     ports:
@@ -17,16 +17,19 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+      target: devstage
     env_file:
       - ./.env.dev
+    command: uvicorn main:app --reload --port 5000 --host 0.0.0.0
     volumes:
-      - ./:/app
+      - .:/home/useful/app
     ports:
-      - 8000:80
+      - 8000:5000
     restart: always
     depends_on:
-      - db
-    command: ./start-reload.sh
+      - useful-db
+    tty: true
+    #command: ./start-reload.sh
 
 
 volumes:

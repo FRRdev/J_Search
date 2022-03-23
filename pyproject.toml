@@ -25,6 +25,7 @@ aerich = "^0.6.2"
 asyncpg = "^0.25.0"
 password = "^0.2"
 Avatar = "^0.1"
+SQLAlchemy = "^1.4.32"
 
 [tool.poetry.dev-dependencies]
 

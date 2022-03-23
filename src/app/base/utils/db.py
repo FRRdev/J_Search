@@ -1,5 +1,5 @@
-from fastapi.requests import Request
-
-
-def get_db(request: Request):
-    return request.state.db
+# from fastapi.requests import Request
+#
+#
+# def get_db(request: Request):
+#     return request.state.db

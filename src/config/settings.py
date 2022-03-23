@@ -7,7 +7,6 @@ SERVER_HOST = "https://127.0.0.1:8000"
 
 SECRET_KEY = b"awubsyb872378t^*TG8y68&*&&*8y8yg9POB)*896ft7CR^56dfYUv"
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 API_V1_STR = "/api/v1"
@@ -23,15 +22,15 @@ BACKEND_CORS_ORIGINS = [
     "http://localhost:8080",
 ]
 
-SQLALCHEMY_DATABASE_URI = (
-     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
-)
+# SQLALCHEMY_DATABASE_URI = (
+#      f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
+# )
 
 
-# SQLALCHEMY_DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
-#                f'{os.environ.get("POSTGRES_PASSWORD")}@' \
-#                f'{os.environ.get("POSTGRES_HOST")}:5432/' \
-#                f'{os.environ.get("POSTGRES_DB")}'
+DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
+               f'{os.environ.get("POSTGRES_PASSWORD")}@' \
+               f'{os.environ.get("POSTGRES_HOST")}:5432/' \
+               f'{os.environ.get("POSTGRES_DB")}'
 
 USERS_OPEN_REGISTRATION = True
 
@@ -40,8 +39,6 @@ EMAIL_RESET_TOKEN_EXPIRE_HOURS = 48
 EMAIL_TEMPLATES_DIR = "src/email-templates/build"
 EMAILS_ENABLED = SMTP_HOST and SMTP_PORT and EMAILS_FROM_NAME
 EMAIL_TEST_USER = 'test@maio.ru'
-
-
 
 #
 # # Email
