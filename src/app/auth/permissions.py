@@ -14,7 +14,7 @@ from ..user.models import User
 reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/v1/login/access-token")
 
 
-def get_current_user(token: str = Security(reusable_oauth2)):
+async def get_current_user(token: str = Security(reusable_oauth2)):
     """ Check auth user
     """
     try:
@@ -24,7 +24,7 @@ def get_current_user(token: str = Security(reusable_oauth2)):
         raise HTTPException(
             status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials"
         )
-    user = service.user_s.get_obj(id=token_data.user_id)
+    user = await service.user_s.get_obj(id=token_data.user_id)
     if not user:
         raise HTTPException(status_code=404, detail="user not found")
     return user
