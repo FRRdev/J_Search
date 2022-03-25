@@ -423,6 +423,17 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
+name = "kwargs"
+version = "1.0.1"
+description = "Python micro-framework"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+test = ["pytest", "pylint", "pytest-cov"]
+
+[[package]]
 name = "lxml"
 version = "4.8.0"
 description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
@@ -869,7 +880,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "b44acc477667efe5be84c1c6cff8606c20d7d3dbcc04c5268c947b2b713f28ac"
+content-hash = "dc3e7518111f166677fda885c9ad54f050c7d44a0c1d0d6c2e90e520089df997"
 
 [metadata.files]
 aerich = [
@@ -1169,6 +1180,10 @@ itsdangerous = [
 jinja2 = [
     {file = "Jinja2-3.0.3-py3-none-any.whl", hash = "sha256:077ce6014f7b40d03b47d1f1ca4b0fc8328a692bd284016f806ed0eaca390ad8"},
     {file = "Jinja2-3.0.3.tar.gz", hash = "sha256:611bb273cd68f3b993fabdc4064fc858c5b47a973cb5aa7999ec1ba405c87cd7"},
+]
+kwargs = [
+    {file = "kwargs-1.0.1-py3-none-any.whl", hash = "sha256:f553495d7dfc7b9ec335d572d93ce723cc6de4917a5d135cbc84c2d772b7139f"},
+    {file = "kwargs-1.0.1.tar.gz", hash = "sha256:2557e7b3e3c9317fb64079c06664a5f1ce9be342e04ee295375d91eef63a5e31"},
 ]
 lxml = [
     {file = "lxml-4.8.0-cp27-cp27m-macosx_10_14_x86_64.whl", hash = "sha256:e1ab2fac607842ac36864e358c42feb0960ae62c34aa4caaf12ada0a1fb5d99b"},

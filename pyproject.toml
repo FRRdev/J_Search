@@ -26,6 +26,7 @@ asyncpg = "^0.25.0"
 password = "^0.2"
 Avatar = "^0.1"
 SQLAlchemy = "^1.4.32"
+kwargs = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
 

@@ -8,6 +8,7 @@ from src.app.auth.security import verify_password, get_password_hash
 class UserService(BaseService):
     model = models.User
     create_schema = schemas.UserCreateInRegistration
+    update_schema = schemas.UserUpdate
     get_schema = schemas.User_G_Pydantic
 
     async def create_user(self, schema: schemas.UserCreateInRegistration, **kwargs):
