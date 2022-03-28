@@ -1,5 +1,4 @@
 from tortoise import fields, models, Tortoise
-from tortoise.contrib.pydantic import pydantic_model_creator
 
 from src.app.user.models import User
 
@@ -15,6 +14,8 @@ class Category(models.Model):
     projects: fields.ReverseRelation['Project']
 
     class PydanticMeta:
+        backward_relations = False
+        exclude = ["projects", "parent"]
         allow_cycles = True
         max_recursion = 4
 
@@ -24,6 +25,13 @@ class Toolkit(models.Model):
         """
     name = fields.CharField(max_length=150)
     parent = fields.ForeignKeyField('models.Toolkit', related_name='children', null=True)
+    projects: fields.ReverseRelation['Project']
+
+    class PydanticMeta:
+        backward_relations = False
+        exclude = ["projects", "parent"]
+        allow_cycles = True
+        max_recursion = 4
 
 
 class Project(models.Model):
@@ -36,8 +44,16 @@ class Project(models.Model):
     category: fields.ForeignKeyRelation[Category] = fields.ForeignKeyField(
         'models.Category', related_name='projects'
     )
-    toolkit = fields.ForeignKeyField('models.Toolkit', related_name='projects')
-    team = fields.ManyToManyField('models.User', related_name='team_projects')
+    toolkit: fields.ForeignKeyRelation[Toolkit] = fields.ForeignKeyField(
+        'models.Toolkit', related_name='projects'
+    )
+    team: fields.ManyToManyRelation[User] = fields.ManyToManyField(
+        'models.User', related_name='team_projects'
+    )
+
+    class PydanticMeta:
+        backward_relations = False
+        exclude = ["category__children"]
 
 
 class Task(models.Model):
