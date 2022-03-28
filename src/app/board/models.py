@@ -14,9 +14,9 @@ class Category(models.Model):
     children: fields.ReverseRelation['Category']
     projects: fields.ReverseRelation['Project']
 
-    # class PydanticMeta:
-    #     allow_cycles = True
-    #     max_recursion = 4
+    class PydanticMeta:
+        allow_cycles = True
+        max_recursion = 4
 
 
 class Toolkit(models.Model):
@@ -61,5 +61,3 @@ class CommentTask(models.Model):
 
 
 Tortoise.init_models(["src.app.board.models"], "models")
-GetProject = pydantic_model_creator(Project, name='get_project',
-                                    exclude=('user', 'tasks'))

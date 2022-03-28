@@ -7,7 +7,7 @@ from src.app.user import schemas, service
 from src.config.social_app import social_auth, redirect_uri
 from .schemas import Token, Msg, VerificationOut
 from .jwt import create_token
-from .security import get_password_hash
+
 from .send_email import send_reset_password_email
 from .service import (
     generate_password_reset_token,

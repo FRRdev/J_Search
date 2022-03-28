@@ -3,11 +3,13 @@ from tortoise.contrib.pydantic import pydantic_model_creator, PydanticModel
 from . import models
 
 from src.app.user.schemas import UserPublic
-# GetCategory = pydantic_model_creator(models.Category, name='get_category')
 
-class GetCategory(PydanticModel):
-    name: str
-    parent_id: int = None
+GetCategory = pydantic_model_creator(models.Category, exclude=('projects',))
+
+
+# class GetCategory(PydanticModel):
+#     name: str
+#     parent_id: int = None
 
 
 class CreateCategory(PydanticModel):
