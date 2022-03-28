@@ -50,16 +50,10 @@ class UserUpdate(UserBaseInDB):
     password: Optional[str] = None
 
 
-# class User(UserBaseInDB):
-#     """ Additional properties to return via API
-#     """
-#     pass
-
-
 class UserInDB(UserBaseInDB):
     """ Additional properties stored in DB
     """
-    password: str
+    #password: str
 
 
 class SocialAccount(BaseModel):

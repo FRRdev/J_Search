@@ -35,6 +35,9 @@ class UserService(BaseService):
     async def create_user_social(self, user: schemas.UserCreateInRegistration):
         return await self.create_user(schema=user, is_active=True)
 
+    async def get_username_email(self, username: str, email: str):
+        return await self.model.get_or_none(Q(username=username) | Q(email=email))
+
     async def create_superuser(self, schema: schemas.UserCreateInRegistration):
         hash_password = get_password_hash(schema.dict().pop("password"))
         return await self.create(
@@ -49,9 +52,6 @@ class UserService(BaseService):
 
 class SocialAccountService(BaseService):
     model = models.SocialAccount
-
-    # create_schema = schemas.UserCreateInRegistration
-    # get_schema = schemas.User_G_Pydantic
 
     async def create_social_account(self, profile: schemas.SocialAccount):
         account = await self.get_obj(account_id=profile.account_id)
