@@ -1,5 +1,7 @@
 from typing import Optional
 
+from tortoise.expressions import Q
+
 from . import schemas, models
 from ..base.service_base import BaseService
 from src.app.auth.security import verify_password, get_password_hash

@@ -15,3 +15,8 @@ async def create_project(schema: schemas.CreateProject, user: models.User = Depe
 @project_router.get('/', response_model=List[schemas.OutProject])
 async def get_list_projects():
     return await service.project_s.all()
+
+
+@project_router.delete('/{pk}', status_code=204)
+async def delete_project(pk: int, user: models.User = Depends(get_user)):
+    return await service.project_s.delete(id=pk)

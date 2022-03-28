@@ -30,7 +30,8 @@ class BaseService:
             raise HTTPException(status_code=404, detail='Object does not exist')
 
     async def all(self):
-        return await self.get_schema.from_queryset(self.model.all())
+        data = await self.get_schema.from_queryset(self.model.all())
+        return data
 
     async def filter(self, **kwargs) -> Optional[GetSchemaType]:
         return await self.get_schema.from_queryset(self.model.filter(**kwargs))

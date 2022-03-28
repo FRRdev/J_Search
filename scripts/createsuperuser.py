@@ -13,15 +13,15 @@ async def main():
     """ Создание супер юзера
     """
     await Tortoise.init(
-        db_url=settings.DATABASE_URI,
+        db_url=settings.DATABASE_URI_LOCAL,
         modules={"models": settings.APPS_MODELS},
     )
-    print('Create superuser')
-    name = input("Username")
-    email = input("Email")
-    first_name = input("First name")
-    password = input("Password")
-    super_user = user_s.get_obj(username=name, email=email)
+    print("Create superuser")
+    name = input("Username: ")
+    email = input("Email: ")
+    first_name = input("First name: ")
+    password = input("Password: ")
+    super_user = await user_s.get_username_email(username=name, email=email)
     if not super_user:
         user_in = UserCreateInRegistration(
             username=name,
@@ -29,10 +29,10 @@ async def main():
             password=password,
             first_name=first_name,
         )
-        user_s.create_superuser(schema=user_in)
-        print("success")
+        await user_s.create_superuser(schema=user_in)
+        print("Success")
     else:
-        print("Error, user is existing")
+        print("Error, user existing")
 
 
 if __name__ == '__main__':

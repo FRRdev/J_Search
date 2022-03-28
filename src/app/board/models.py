@@ -14,7 +14,7 @@ class Category(models.Model):
     projects: fields.ReverseRelation['Project']
 
     class PydanticMeta:
-        backward_relations = False
+        backward_relations = True
         exclude = ["projects", "parent"]
         allow_cycles = True
         max_recursion = 4
@@ -28,7 +28,7 @@ class Toolkit(models.Model):
     projects: fields.ReverseRelation['Project']
 
     class PydanticMeta:
-        backward_relations = False
+        backward_relations = True
         exclude = ["projects", "parent"]
         allow_cycles = True
         max_recursion = 4
