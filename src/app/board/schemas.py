@@ -1,51 +1,50 @@
 from datetime import datetime
-from tortoise.contrib.pydantic import pydantic_model_creator, PydanticModel
-from . import models
+from typing import List
 
+from pydantic.main import BaseModel
+from tortoise.contrib.pydantic import pydantic_model_creator, PydanticModel
+
+from . import models
 from src.app.user.schemas import UserPublic
 
-GetCategory = pydantic_model_creator(models.Category, exclude=('projects',))
+CreateCategory = pydantic_model_creator(models.Category, exclude_readonly=True)
+GetCategory = pydantic_model_creator(models.Category)
 
 
-# class GetCategory(PydanticModel):
-#     name: str
-#     parent_id: int = None
-
-
-class CreateCategory(PydanticModel):
+class OutCategory(BaseModel):
+    id: int
     name: str
-    parent_id: int = None
 
 
+CreateToolkit = pydantic_model_creator(models.Toolkit, exclude_readonly=True)
 GetToolkit = pydantic_model_creator(models.Toolkit, name='get_toolkit')
 
 
-class CreateToolkit(PydanticModel):
+class OutToolkit(BaseModel):
+    id: int
     name: str
-    parent_id: int = None
 
 
-class CreateProject(PydanticModel):
-    name: str
-    description: str
-    category_id: int
-    user_id: int
-    toolkit_id: int
+CreateProject = pydantic_model_creator(models.Project, exclude=('user_id',), exclude_readonly=True)
+GetProject = pydantic_model_creator(models.Project, name='get_project')
 
 
-# GetProject = pydantic_model_creator(models.Project, name='get_project')
-
-class GetProject(PydanticModel):
+class OutProject(PydanticModel):
+    id: int
     name: str
     description: str
     create_date: datetime
-    category: GetCategory
+    user: UserPublic
+    category: OutCategory
+    toolkit: OutToolkit
+
+
+class Category(PydanticModel):
+    id: int
+    name: str
 
     class Config:
         orm_mode = True
-
-
-GetTask = pydantic_model_creator(models.Task, name='get_task')
 
 
 class CreateTask(PydanticModel):
@@ -59,18 +58,26 @@ class CreateTask(PydanticModel):
         schema_extra = {
             "example": {
                 "description": "string",
-                "start_date": "2022-10-18 15:26:17",
-                "end_date": "2022-10-19 15:26:17",
+                "start_date": "2020-10-18 15:26:17",
+                "end_date": "2020-10-18 15:26:17",
                 "project_id": 0,
                 "worker_id": 0,
             }
         }
 
 
-GetCommentTask = pydantic_model_creator(models.CommentTask, name='get_comment_task')
+GetTask = pydantic_model_creator(models.Task, name='get_task')
 
 
 class CreateCommentTask(PydanticModel):
     user_id: int
     task_id: int
     message: str
+
+
+GetCommentTask = pydantic_model_creator(models.CommentTask, name='get_comment_task')
+
+
+class CreateTeam(BaseModel):
+    project: int
+    team: List[int]
