@@ -39,6 +39,9 @@ class Project(models.Model):
         """
     name = fields.CharField(max_length=150)
     description = fields.TextField()
+    company: fields.ForeignKeyNullableRelation = fields.ForeignKeyField(
+        'models.Company', related_name='projects_by_company', null=True
+    )
     create_date = fields.DatetimeField(auto_now_add=True)
     user = fields.ForeignKeyField('models.User', related_name='projects')
     category: fields.ForeignKeyRelation[Category] = fields.ForeignKeyField(
@@ -76,4 +79,4 @@ class CommentTask(models.Model):
     create_date = fields.DatetimeField(auto_now_add=True)
 
 
-Tortoise.init_models(["src.app.board.models"], "models")
+Tortoise.init_models(["src.app.company.models","src.app.board.models"], "models")

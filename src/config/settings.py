@@ -45,6 +45,7 @@ EMAIL_TEST_USER = 'test@maio.ru'
 APPS_MODELS = [
     "src.app.user.models",
     "src.app.auth.models",
+    "src.app.company.models",
     "src.app.board.models",
     "aerich.models",
 ]
