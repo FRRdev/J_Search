@@ -5,6 +5,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from src.config import settings
 # from src.db.session import Sessionlocal
 
+
 from src.app import routers
 
 from tortoise.contrib.fastapi import register_tortoise
@@ -32,3 +33,4 @@ register_tortoise(
     # generate_schemas=True,
     add_exception_handlers=True,
 )
+

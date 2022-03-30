@@ -6,9 +6,10 @@ from tortoise.contrib.pydantic import pydantic_model_creator, PydanticModel
 
 from . import models
 from src.app.user.schemas import UserPublic
+from src.app.company import schemas
 
 CreateCategory = pydantic_model_creator(models.Category, exclude_readonly=True)
-GetCategory = pydantic_model_creator(models.Category)
+GetCategory = pydantic_model_creator(models.Category, name='get_category')
 
 
 class OutCategory(BaseModel):

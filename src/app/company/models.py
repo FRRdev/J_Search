@@ -45,6 +45,9 @@ class Company(models.Model):
     workers: fields.ReverseRelation[User]
     vacancies: fields.ReverseRelation['Vacancy']
 
+    class PydanticMeta:
+        backward_relations = False
+
 
 class Skill(models.Model):
     text = fields.CharField(max_length=150)
