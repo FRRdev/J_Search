@@ -14,5 +14,12 @@ class ClassificationService(BaseService):
     get_schema = schemas.GetClassification
 
 
+class AddressService(BaseService):
+    model = models.Address
+    create_schema = schemas.CreateAddress
+    get_schema = schemas.GetAddress
+
+
 company_s = CompanyService()
 classification_s = ClassificationService()
+address_s = AddressService()

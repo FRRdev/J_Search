@@ -25,3 +25,38 @@ async def create_classification(
     """ Create classification router
     """
     return await service.classification_s.create(schema)
+
+
+@company_router.get('/classification', response_model=List[schemas.GetClassification])
+async def get_list_classification():
+    return await service.classification_s.all()
+
+
+@company_router.post('/address', response_model=schemas.AddressOut)
+async def create_address(
+        schema: schemas.CreateAddress,
+        user: models.User = Depends(get_superuser)
+):
+    """ Create company router
+    """
+    return await service.address_s.create(schema)
+
+
+@company_router.put('/address/{pk}', response_model=schemas.AddressOut)
+async def update_address(
+        pk: int, schema: schemas.CreateAddress,
+        user: models.User = Depends(get_superuser)
+):
+    return await service.address_s.update(schema, id=pk)
+
+
+@company_router.get('/address', response_model=List[schemas.AddressOut])
+async def get_list_address():
+    """Get list of address
+    """
+    return await service.address_s.all()
+
+
+@company_router.delete('/address/{pk}', status_code=204)
+async def delete_address(pk: int):
+    return await service.address_s.delete(id=pk)
