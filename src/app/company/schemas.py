@@ -28,3 +28,20 @@ class AddressOut(PydanticModel):
     street: str
     house: str
     company: CompanyOut
+
+
+CreateSkill = pydantic_model_creator(models.Skill, exclude_readonly=True)
+GetSkill = pydantic_model_creator(models.Skill, exclude=('vacancies',), name='get_skill')
+
+CreateVacancy = pydantic_model_creator(models.Vacancy, exclude_readonly=True)
+GetVacancy = pydantic_model_creator(models.Vacancy)
+
+
+class VacancyOut(PydanticModel):
+    id: int
+    name: str
+    description: str
+    salary: str
+    create_date: datetime
+    company: CompanyOut
+    vacancy_skills: List[GetSkill]

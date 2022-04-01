@@ -16,7 +16,7 @@ class BaseService:
     update_schema: UpdateSchemaType
     get_schema: GetSchemaType
 
-    async def create(self, schema, **kwargs) -> Optional[CreateSchemaType]:
+    async def create(self, schema, *args, **kwargs) -> Optional[CreateSchemaType]:
         obj = await self.model.create(**schema.dict(exclude_unset=True), **kwargs)
         return await self.get_schema.from_tortoise_orm(obj)
 
@@ -29,7 +29,7 @@ class BaseService:
         if not obj:
             raise HTTPException(status_code=404, detail='Object does not exist')
 
-    async def all(self):
+    async def all(self) -> Optional[GetSchemaType]:
         data = await self.get_schema.from_queryset(self.model.all())
         return data
 
@@ -41,4 +41,3 @@ class BaseService:
 
     async def get_obj(self, **kwargs):
         return await self.model.get_or_none(**kwargs)
-

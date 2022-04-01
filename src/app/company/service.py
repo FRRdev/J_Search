@@ -1,5 +1,9 @@
+from typing import Optional
+
 from . import schemas, models
 from ..base.service_base import BaseService
+
+from .schemas import VacancyOut
 
 
 class CompanyService(BaseService):
@@ -20,6 +24,30 @@ class AddressService(BaseService):
     get_schema = schemas.GetAddress
 
 
+class VacancyService(BaseService):
+    model = models.Vacancy
+    create_schema = schemas.CreateVacancy
+    get_schema = schemas.GetVacancy
+
+    async def vacancy_create(self, schema, skills, **kwargs) -> Optional[schemas.CreateVacancy]:
+        obj = await self.model.create(**schema.dict(exclude_unset=True), **kwargs)
+        _skills = await models.Skill.filter(id__in=skills)
+        await obj.vacancy_skills.add(*_skills)
+        return await self.model.get(id=obj.id).prefetch_related('vacancy_skills').select_related('company')
+
+    async def list_vacancies(self) -> Optional[schemas.GetVacancy]:
+        data = await self.model.all().prefetch_related('vacancy_skills').select_related('company')
+        return data
+
+
+class SkillService(BaseService):
+    model = models.Skill
+    create_schema = schemas.CreateSkill
+    get_schema = schemas.GetSkill
+
+
 company_s = CompanyService()
 classification_s = ClassificationService()
 address_s = AddressService()
+vacancy_s = VacancyService()
+skill_s = SkillService()

@@ -1,3 +1,4 @@
+from sqlalchemy.testing import exclude
 from tortoise import fields, models, Tortoise
 
 from src.app.user.models import User
@@ -51,7 +52,10 @@ class Company(models.Model):
 
 class Skill(models.Model):
     text = fields.CharField(max_length=150)
-    vacancies: fields.ManyToManyRelation['Vacancy']
+    #vacancies: fields.ManyToManyRelation['Vacancy']
+
+    class PydanticMeta:
+        backward_relations = False
 
 
 class Vacancy(models.Model):
@@ -62,9 +66,12 @@ class Vacancy(models.Model):
     company: fields.ForeignKeyRelation[Company] = fields.ForeignKeyField(
         'models.Company', related_name='vacancies'
     )
-    skills: fields.ManyToManyRelation[Skill] = fields.ManyToManyField(
-        'models.Skill', related_name='vacancies_by_skills',
+    vacancy_skills: fields.ManyToManyRelation[Skill] = fields.ManyToManyField(
+        'models.Skill', related_name='vacancies'
     )
+
+    class PydanticMeta:
+        backward_relations = False
 
 
 class Offer(models.Model):

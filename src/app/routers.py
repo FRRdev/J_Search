@@ -13,5 +13,6 @@ api_router.include_router(toolkit.toolkit_router, prefix='/board/toolkit', tags=
 api_router.include_router(project.project_router, prefix='/board/project', tags=["board"])
 api_router.include_router(task.task_router, prefix='/board/task', tags=["board"])
 api_router.include_router(company.company_router, prefix='/company', tags=["company"])
+api_router.include_router(vacancy.vacancy_router, prefix='/vacancy', tags=["company"])
 
 api_router.include_router(admin.admin_router, prefix='/admin/user', tags=["admin"])
