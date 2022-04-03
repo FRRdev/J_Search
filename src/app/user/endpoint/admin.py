@@ -29,7 +29,7 @@ async def get_single_user(pk: int, user: models.User = Depends(get_superuser)):
 @admin_router.put('/{pk}', response_model=schemas.UserPublic)
 async def update_user(pk: int, schema: schemas.UserUpdate, user: models.User = Depends(get_superuser)):
     """ Update user"""
-    return await service.user_s.update(schema, id=pk)
+    return await service.user_s.update_user(schema, id=pk)
 
 
 @admin_router.delete('/{pk}', status_code=204)

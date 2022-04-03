@@ -41,6 +41,9 @@ class Company(models.Model):
     classification: fields.ForeignKeyRelation[Classification] = fields.ForeignKeyField(
         'models.Classification', related_name='companies'
     )
+    owner: fields.ForeignKeyRelation[User] = fields.ForeignKeyField(
+        'models.User', related_name='companies'
+    )
 
     addresses: fields.ReverseRelation['Address']
     workers: fields.ReverseRelation[User]
@@ -52,7 +55,8 @@ class Company(models.Model):
 
 class Skill(models.Model):
     text = fields.CharField(max_length=150)
-    #vacancies: fields.ManyToManyRelation['Vacancy']
+
+    # vacancies: fields.ManyToManyRelation['Vacancy']
 
     class PydanticMeta:
         backward_relations = False

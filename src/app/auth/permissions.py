@@ -40,3 +40,4 @@ def get_superuser(current_user: User = Security(get_current_user)):
     if not current_user.is_superuser:
         raise HTTPException(status_code=400, detail="User does not have enough privileges")
     return current_user
+

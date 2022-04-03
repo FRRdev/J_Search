@@ -21,6 +21,14 @@ class UserService(BaseService):
             ), **kwargs
         )
 
+    async def update_user(self, schema: schemas.UserUpdate, **kwargs):
+        hash_password = get_password_hash(schema.dict().pop("password"))
+        return await self.update(
+            schemas.UserUpdate(
+                **schema.dict(exclude={"password"}), password=hash_password
+            ), **kwargs
+        )
+
     async def authenticate(self, username: str, password: str) -> Optional[model]:
         user = await self.model.get(username=username)
         if not user:

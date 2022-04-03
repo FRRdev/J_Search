@@ -17,6 +17,7 @@ class User(models.Model):
     is_active = fields.BooleanField(default=False)
     is_staff = fields.BooleanField(default=False)
     is_superuser = fields.BooleanField(default=False)
+    is_company = fields.BooleanField(default=False)
     avatar = fields.CharField(max_length=100, null=True)
 
     # async def save(self, *args, **kwargs) -> None:

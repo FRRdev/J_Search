@@ -16,6 +16,7 @@ class UserBaseInDB(UserBase):
     email: Optional[str] = None
     is_active: Optional[bool] = True
     is_superuser: Optional[bool] = False
+    is_company: Optional[bool] = False
 
     class Config:
         orm_mode = True
@@ -44,16 +45,24 @@ class UserCreateInRegistration(BaseModel):
         orm_mode = True
 
 
-class UserUpdate(UserBaseInDB):
+class UserUpdate(BaseModel):
     """ Properties to receive via API on update
     """
+    username: Optional[str] = None
+    email: Optional[str] = None
+    is_active: Optional[bool] = True
+    is_superuser: Optional[bool] = False
+    is_company: Optional[bool] = False
     password: Optional[str] = None
+
+    class Config:
+        orm_mode = True
 
 
 class UserInDB(UserBaseInDB):
     """ Additional properties stored in DB
     """
-    #password: str
+    # password: str
 
 
 class SocialAccount(BaseModel):

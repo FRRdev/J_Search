@@ -4,7 +4,6 @@ from fastapi import APIRouter, Depends
 from .. import schemas, models, service
 from ...auth.permissions import get_superuser, get_user
 
-
 vacancy_router = APIRouter()
 
 
@@ -40,6 +39,10 @@ async def get_list_vacancies():
     """
     return await service.vacancy_s.list_vacancies()
 
+
+@vacancy_router.delete('/{pk}', status_code=204)
+async def delete_vacancy(pk: int):
+    return await service.vacancy_s.delete(id=pk)
 
 # @vacancy_router.get('/test', status_code=201)
 # async def get_test():
