@@ -58,5 +58,5 @@ async def get_list_address():
 
 
 @company_router.delete('/address/{pk}', status_code=204)
-async def delete_address(pk: int):
+async def delete_address(pk: int, user: models.User = Depends(get_owner_company)):
     return await service.address_s.delete(id=pk)

@@ -54,3 +54,7 @@ class VacancyOut(PydanticModel):
     create_date: datetime
     company: CompanyOut
     vacancy_skills: List[GetSkill]
+
+
+CreateOffer = pydantic_model_creator(models.Offer, exclude_readonly=True)
+GetOffer = pydantic_model_creator(models.Offer)

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from . import schemas, models
-from ..base.service_base import BaseService
+from ..base.service_base import BaseService, CreateSchemaType
 
 from .schemas import VacancyOut
 
@@ -46,8 +46,23 @@ class SkillService(BaseService):
     get_schema = schemas.GetSkill
 
 
+class OfferService(BaseService):
+    model = models.Offer
+    create_schema = schemas.CreateOffer
+    get_schema = schemas.GetOffer
+
+    async def create_or_delete_offer(self, **kwargs) -> dict:
+        obj = await self.model.filter(**kwargs).exists()
+        if obj:
+            await self.delete(**kwargs)
+            return {"msg": "Offer deleted successfully"}
+        await self.model.create(**kwargs)
+        return {"msg": "Offer created successfully"}
+
+
 company_s = CompanyService()
 classification_s = ClassificationService()
 address_s = AddressService()
 vacancy_s = VacancyService()
 skill_s = SkillService()
+offer_s = OfferService()

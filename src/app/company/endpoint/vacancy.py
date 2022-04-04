@@ -40,8 +40,22 @@ async def get_list_vacancies():
     return await service.vacancy_s.list_vacancies()
 
 
+@vacancy_router.get('/{pk}', response_model=schemas.GetVacancy)
+async def get_single_vacancy(pk: int):
+    """ Get single vacancy router
+    """
+    return await service.vacancy_s.get(id=pk)
+
+
+@vacancy_router.post('/{pk}', status_code=204)
+async def create_delete_offer_to_vacancy(pk: int, user: models.User = Depends(get_user)):
+    """ Get single vacancy router
+    """
+    return await service.offer_s.create_or_delete_offer(user_id=user.id, vacancy_id=pk)
+
+
 @vacancy_router.delete('/{pk}', status_code=204)
-async def delete_vacancy(pk: int):
+async def delete_vacancy(pk: int, user: models.User = Depends(get_superuser)):
     return await service.vacancy_s.delete(id=pk)
 
 # @vacancy_router.get('/test', status_code=201)

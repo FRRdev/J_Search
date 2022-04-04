@@ -88,4 +88,5 @@ class Offer(models.Model):
     )
 
 
+
 Tortoise.init_models(["src.app.company.models"], "models")

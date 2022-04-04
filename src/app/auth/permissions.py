@@ -11,7 +11,7 @@ from .schemas import TokenPayload
 from src.app.user import service
 from .. import user
 from ..user.models import User
-from ..company.models import Address, Company
+from ..company.models import Company
 
 reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/v1/login/access-token")
 
