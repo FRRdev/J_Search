@@ -51,6 +51,7 @@ class Company(models.Model):
 
     class PydanticMeta:
         backward_relations = False
+        exclude = ["classification", ]
 
 
 class Skill(models.Model):

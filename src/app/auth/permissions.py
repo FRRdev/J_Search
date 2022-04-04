@@ -1,6 +1,6 @@
 import jwt
 from jwt import PyJWTError
-from fastapi import HTTPException, Security
+from fastapi import HTTPException, Security, Depends
 from fastapi.security import OAuth2PasswordBearer
 from starlette.status import HTTP_403_FORBIDDEN
 
@@ -9,7 +9,9 @@ from .jwt import ALGORITHM
 
 from .schemas import TokenPayload
 from src.app.user import service
+from .. import user
 from ..user.models import User
+from ..company.models import Address, Company
 
 reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/v1/login/access-token")
 
@@ -41,3 +43,15 @@ def get_superuser(current_user: User = Security(get_current_user)):
         raise HTTPException(status_code=400, detail="User does not have enough privileges")
     return current_user
 
+
+def get_company(current_user: User = Security(get_current_user)):
+    if not current_user.is_company:
+        raise HTTPException(status_code=400, detail="User does not have privileges of company")
+    return current_user
+
+
+async def get_owner_company(pk: int, current_user: User = Depends(get_company)):
+    privileges_exist = await Company.filter(addresses=pk, owner=current_user).exists()
+    if not privileges_exist:
+        raise HTTPException(status_code=400, detail="User is not owner a company")
+    return current_user

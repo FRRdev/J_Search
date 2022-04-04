@@ -2,19 +2,19 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from .. import schemas, models, service
-from ...auth.permissions import get_superuser
+from ...auth.permissions import get_superuser, get_company, get_owner_company
 
 company_router = APIRouter()
 
 
-@company_router.post('/', response_model=schemas.GetCompany)
+@company_router.post('/', response_model=schemas.CompanyFullOut)
 async def create_company(
         schema: schemas.CreateCompany,
-        user: models.User = Depends(get_superuser)
+        user: models.User = Depends(get_company)
 ):
     """ Create company router
     """
-    return await service.company_s.create(schema)
+    return await service.company_s.create(schema, owner_id=user.id)
 
 
 @company_router.post('/classification', response_model=schemas.GetClassification)
@@ -45,7 +45,7 @@ async def create_address(
 @company_router.put('/address/{pk}', response_model=schemas.AddressOut)
 async def update_address(
         pk: int, schema: schemas.CreateAddress,
-        user: models.User = Depends(get_superuser)
+        user: models.User = Depends(get_owner_company)
 ):
     return await service.address_s.update(schema, id=pk)
 
