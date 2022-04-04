@@ -63,6 +63,9 @@ class UserService(BaseService):
 class SocialAccountService(BaseService):
     model = models.SocialAccount
 
+    async def get_obj(self, **kwargs):
+        return await self.model.get_or_none(**kwargs).select_related('user')
+
     async def create_social_account(self, profile: schemas.SocialAccount):
         account = await self.get_obj(account_id=profile.account_id)
         if account:
