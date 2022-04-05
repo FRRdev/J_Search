@@ -58,3 +58,7 @@ class VacancyOut(PydanticModel):
 
 CreateOffer = pydantic_model_creator(models.Offer, exclude_readonly=True)
 GetOffer = pydantic_model_creator(models.Offer)
+
+
+class MSG(BaseModel):
+    msg: str

@@ -1,7 +1,8 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Form, Query
 from .. import schemas, models, service
+from ..schemas import MSG
 from ...auth.permissions import get_superuser, get_user
 
 vacancy_router = APIRouter()
@@ -58,6 +59,12 @@ async def create_delete_offer_to_vacancy(pk: int, user: models.User = Depends(ge
 async def delete_vacancy(pk: int, user: models.User = Depends(get_superuser)):
     return await service.vacancy_s.delete(id=pk)
 
+
+@vacancy_router.get('/search/', response_model=List[schemas.VacancyOut])
+async def search_vacancies(info: str = Query(...)):
+    """ Search vacancy by some field
+    """
+    return await service.vacancy_s.list_vacancies_by_info(info)
 # @vacancy_router.get('/test', status_code=201)
 # async def get_test():
 #     """ Get list vacancies router

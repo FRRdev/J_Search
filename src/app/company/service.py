@@ -1,5 +1,7 @@
 from typing import Optional
 
+from tortoise.expressions import Q
+
 from . import schemas, models
 from ..base.service_base import BaseService, CreateSchemaType
 
@@ -37,6 +39,11 @@ class VacancyService(BaseService):
 
     async def list_vacancies(self) -> Optional[schemas.GetVacancy]:
         data = await self.model.all().prefetch_related('vacancy_skills').select_related('company')
+        return data
+
+    async def list_vacancies_by_info(self, info: str) -> Optional[schemas.GetVacancy]:
+        data = await self.model.filter(Q(name__icontains=info) | Q(description__icontains=info)).prefetch_related(
+            'vacancy_skills').select_related('company')
         return data
 
 
