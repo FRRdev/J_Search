@@ -3,7 +3,9 @@ from typing import List
 from fastapi import APIRouter, Depends, Form, Query
 from .. import schemas, models, service
 from ..schemas import MSG
-from ...auth.permissions import get_superuser, get_user
+from ...auth.permissions import get_superuser, get_user, get_owner_company_by_vacancy
+from ...user import service as user_service
+from ...user.schemas import UserPublic
 
 vacancy_router = APIRouter()
 
@@ -20,6 +22,8 @@ async def create_skill(
 
 @vacancy_router.get('/skill', response_model=List[schemas.GetSkill])
 async def get_list_classification():
+    """ Get skill's list router
+    """
     return await service.skill_s.all()
 
 
@@ -50,13 +54,15 @@ async def get_single_vacancy(pk: int):
 
 @vacancy_router.post('/{pk}', status_code=204)
 async def create_delete_offer_to_vacancy(pk: int, user: models.User = Depends(get_user)):
-    """ Get single vacancy router
+    """ Create And Delete offer to vacancy router
     """
     return await service.offer_s.create_or_delete_offer(user_id=user.id, vacancy_id=pk)
 
 
 @vacancy_router.delete('/{pk}', status_code=204)
 async def delete_vacancy(pk: int, user: models.User = Depends(get_superuser)):
+    """ Delete vacancy by id
+    """
     return await service.vacancy_s.delete(id=pk)
 
 
@@ -65,18 +71,10 @@ async def search_vacancies(info: str = Query(...)):
     """ Search vacancy by some field
     """
     return await service.vacancy_s.list_vacancies_by_info(info)
-# @vacancy_router.get('/test', status_code=201)
-# async def get_test():
-#     """ Get list vacancies router
-#     """
-#     data = await Vacancy.all().prefetch_related('vacancy_skills')
-#     data = data[0]
-#     data = data.vacancy_skills
-#     for d in data:
-#         print(d.id)
-#     data = await service.vacancy_s.all()
-#     data = data[0]
-#     print(data)
-#     skills = data.vacancy_skills
-#     for s in skills:
-#         print(s.id)
+
+
+@vacancy_router.get('/offer/{pk}', response_model=List[UserPublic])
+async def show_offer_by_vacancy(pk: int, user: models.User = Depends(get_owner_company_by_vacancy)):
+    """ Search offer for vacancy
+    """
+    return await user_service.user_s.filter(offers_by_user__vacancy=pk)

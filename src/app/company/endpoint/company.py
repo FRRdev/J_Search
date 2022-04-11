@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from .. import schemas, models, service
-from ...auth.permissions import get_superuser, get_company, get_owner_company
+from ...auth.permissions import get_superuser, get_company, get_owner_company_by_address
 
 company_router = APIRouter()
 
@@ -45,7 +45,7 @@ async def create_address(
 @company_router.put('/address/{pk}', response_model=schemas.AddressOut)
 async def update_address(
         pk: int, schema: schemas.CreateAddress,
-        user: models.User = Depends(get_owner_company)
+        user: models.User = Depends(get_owner_company_by_address)
 ):
     return await service.address_s.update(schema, id=pk)
 
@@ -58,5 +58,5 @@ async def get_list_address():
 
 
 @company_router.delete('/address/{pk}', status_code=204)
-async def delete_address(pk: int, user: models.User = Depends(get_owner_company)):
+async def delete_address(pk: int, user: models.User = Depends(get_owner_company_by_address)):
     return await service.address_s.delete(id=pk)
