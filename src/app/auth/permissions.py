@@ -50,8 +50,15 @@ def get_company(current_user: User = Security(get_current_user)):
     return current_user
 
 
-async def get_owner_company(pk: int, current_user: User = Depends(get_company)):
+async def get_owner_company_by_address(pk: int, current_user: User = Depends(get_company)):
     privileges_exist = await Company.filter(addresses=pk, owner=current_user).exists()
+    if not privileges_exist:
+        raise HTTPException(status_code=400, detail="User is not owner a company")
+    return current_user
+
+
+async def get_owner_company_by_vacancy(pk: int, current_user: User = Depends(get_company)):
+    privileges_exist = await Company.filter(vacancies=pk, owner=current_user).exists()
     if not privileges_exist:
         raise HTTPException(status_code=400, detail="User is not owner a company")
     return current_user
