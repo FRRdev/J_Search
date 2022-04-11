@@ -12,7 +12,7 @@ from tortoise.contrib.fastapi import register_tortoise
 
 app = FastAPI(
     title="Useful",
-    description="Author - DJWOMS",
+    description="Author - FRRDev",
     version="0.1.0",
 )
 

@@ -78,3 +78,12 @@ async def show_offer_by_vacancy(pk: int, user: models.User = Depends(get_owner_c
     """ Search offer for vacancy
     """
     return await user_service.user_s.filter(offers_by_user__vacancy=pk)
+
+
+@vacancy_router.post('/offer/{pk}/{user_pk}', status_code=204)
+async def accept_offer_to_vacancy(
+        pk: int, user_pk: int, user: models.User = Depends(get_owner_company_by_vacancy)
+):
+    """ Accept And Ignore offer to vacancy router
+    """
+    return await service.offer_s.accept_offer(user_id=user_pk, vacancy_id=pk)
