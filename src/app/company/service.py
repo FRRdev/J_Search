@@ -77,6 +77,13 @@ class OfferService(BaseService):
             return {"msg": "User is hired successfully"}
         return {"msg": "User does not exist"}
 
+    async def delete_offer(self, **kwargs) -> dict:
+        obj = await self.model.filter(**kwargs).select_related('user', 'vacancy').first()
+        if obj:
+            await self.delete(**kwargs)
+            return {"msg": "user rejected successfully"}
+        return {"msg": "User does not exist"}
+
 
 company_s = CompanyService()
 classification_s = ClassificationService()

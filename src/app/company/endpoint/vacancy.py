@@ -87,3 +87,12 @@ async def accept_offer_to_vacancy(
     """ Accept And Ignore offer to vacancy router
     """
     return await service.offer_s.accept_offer(user_id=user_pk, vacancy_id=pk)
+
+
+@vacancy_router.delete('/offer/{pk}/{user_pk}', status_code=204)
+async def delete_offer_to_vacancy(
+        pk: int, user_pk: int, user: models.User = Depends(get_owner_company_by_vacancy)
+):
+    """ Ignore offer to vacancy router
+    """
+    return await service.offer_s.delete_offer(user_id=user_pk, vacancy_id=pk)
