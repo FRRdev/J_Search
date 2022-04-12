@@ -2,7 +2,6 @@ from typing import List
 
 from fastapi import APIRouter, Depends, Form, Query
 from .. import schemas, models, service
-from ..schemas import MSG
 from ...auth.permissions import get_superuser, get_user, get_owner_company_by_vacancy
 from ...user import service as user_service
 from ...user.schemas import UserPublic
