@@ -1,4 +1,3 @@
-from sqlalchemy.testing import exclude
 from tortoise import fields, models, Tortoise
 
 from src.app.user.models import User

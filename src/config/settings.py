@@ -33,6 +33,9 @@ DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
                f'{os.environ.get("POSTGRES_DB")}'
 
 DATABASE_URI_LOCAL = 'postgres://postgres:Zahita183@localhost:5432/useful_test_tortoise'
+DATABASE_URI_TEST = 'postgres://postgres:Zahita183@localhost:5432/test_j_search'
+
+TESTING = True
 
 USERS_OPEN_REGISTRATION = True
 
@@ -49,6 +52,7 @@ APPS_MODELS = [
     "src.app.board.models",
     "aerich.models",
 ]
+
 #
 # # Email
 # SMTP_TLS = os.environ.get("SMTP_TLS")

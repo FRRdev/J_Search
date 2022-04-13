@@ -66,16 +66,16 @@ class OfferService(BaseService):
         await self.model.create(**kwargs)
         return {"msg": "Offer created successfully"}
 
-    async def accept_offer(self, **kwargs) -> dict:
-        obj = await self.model.filter(**kwargs).select_related('user', 'vacancy').first()
-        if obj:
-            user_to_add = await obj.user
-            current_company = await obj.vacancy.company
-            user_to_add.company = current_company
-            await user_to_add.save()
-            await self.delete(**kwargs)
-            return {"msg": "User is hired successfully"}
-        return {"msg": "User does not exist"}
+    # async def accept_offer(self, **kwargs) -> dict:
+    #     obj = await self.model.filter(**kwargs).select_related('user', 'vacancy').first()
+    #     if obj:
+    #         user_to_add = await obj.user
+    #         current_company = await obj.vacancy.company
+    #         user_to_add.company = current_company
+    #         await user_to_add.save()
+    #         await self.delete(**kwargs)
+    #         return {"msg": "User is hired successfully"}
+    #     return {"msg": "User does not exist"}
 
     async def delete_offer(self, **kwargs) -> dict:
         obj = await self.model.filter(**kwargs).select_related('user', 'vacancy').first()
