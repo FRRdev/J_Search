@@ -1,18 +1,15 @@
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.config import settings
-# from src.db.session import Sessionlocal
-
 
 from src.app import routers
 
 from tortoise.contrib.fastapi import register_tortoise
-from tortoise import Tortoise, run_async
 
 app = FastAPI(
-    title="Useful",
+    title="J_Search",
     description="Author - FRRDev",
     version="0.1.0",
 )
