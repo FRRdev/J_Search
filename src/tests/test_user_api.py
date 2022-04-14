@@ -4,38 +4,47 @@ from main import app
 from src.app.auth.security import get_password_hash
 from src.app.user.models import User
 
+superuser, no_superuser = User, User
+superuser_access_token, no_superuser_access_token = None, None
+
 
 @pytest.mark.asyncio
 async def test_create_user():
-    name, age = ["sam", 99]
-    assert await User.filter(username=name).count() == 0
     password = '123'
     password_hash = get_password_hash(password)
-    await User.create(
-        username=name, email='test@mail.ru', password=password_hash, first_name='Samick',
+    global superuser
+    superuser = await User.create(
+        username='sam', email='test@mail.ru', password=password_hash, first_name='Samick',
         is_active=True, is_superuser=True, is_company=True
     )
     password_hash = get_password_hash(password)
-    await User.create(
+    global no_superuser
+    no_superuser = await User.create(
         username='no_active', email='noact@mail.ru', password=password_hash, first_name='ErrorUser',
         is_active=True, is_superuser=False, is_company=True
     )
-    assert await User.filter(username=name).count() == 1
+    data_superuser = {"username": superuser.username, "password": '123'}
+    data_no_superuser = {"username": no_superuser.username, "password": '123'}
+    async with AsyncClient(app=app, base_url="http://localhost") as ac:
+        token_response = await ac.post("/api/v1/auth/login/access-token", data=data_superuser)
+        data = token_response.json()
+        global superuser_access_token
+        superuser_access_token = data['access_token']
+        token_response = await ac.post("/api/v1/auth/login/access-token", data=data_no_superuser)
+        data = token_response.json()
+        global no_superuser_access_token
+        no_superuser_access_token = data['access_token']
 
 
 @pytest.mark.asyncio
 async def test_admin_can_get_users():
-    user = await User.get(username='sam')
-    data = {"username": user.username, "password": '123'}
     async with AsyncClient(app=app, base_url="http://localhost") as ac:
-        token_response = await ac.post("/api/v1/auth/login/access-token", data=data)
-        data = token_response.json()
-        access_token = data['access_token']
-        users_response = await ac.get("/api/v1/admin/user/", headers={'Authorization': f'Bearer {access_token}'})
+        users_response = await ac.get("/api/v1/admin/user/",
+                                      headers={'Authorization': f'Bearer {superuser_access_token}'})
         data = users_response.json()
         data_must_exist = {
             'first_name': 'Samick',
-            'id': user.id,
+            'id': superuser.id,
         }
         assert data is not None
         assert data_must_exist in data
@@ -43,13 +52,9 @@ async def test_admin_can_get_users():
 
 @pytest.mark.asyncio
 async def test_privileges_get_users():
-    user = await User.get(username='no_active')
-    data = {"username": user.username, "password": '123'}
     async with AsyncClient(app=app, base_url="http://localhost") as ac:
-        token_response = await ac.post("/api/v1/auth/login/access-token", data=data)
-        data = token_response.json()
-        access_token = data['access_token']
-        users_response = await ac.get("/api/v1/admin/user/", headers={'Authorization': f'Bearer {access_token}'})
+        users_response = await ac.get("/api/v1/admin/user/",
+                                      headers={'Authorization': f'Bearer {no_superuser_access_token}'})
         data = users_response.json()
         error_meessage = {'detail': 'User does not have enough privileges'}
         assert error_meessage == data
@@ -57,24 +62,19 @@ async def test_privileges_get_users():
 
 @pytest.mark.asyncio
 async def test_get_single_user():
-    user = await User.get(username='sam')
-    data = {"username": user.username, "password": '123'}
     async with AsyncClient(app=app, base_url="http://localhost") as ac:
-        token_response = await ac.post("/api/v1/auth/login/access-token", data=data)
-        data = token_response.json()
-        access_token = data['access_token']
         users_response = await ac.get(
-            f"/api/v1/admin/user/{user.id}", headers={'Authorization': f'Bearer {access_token}'}
+            f"/api/v1/admin/user/{superuser.id}", headers={'Authorization': f'Bearer {superuser_access_token}'}
         )
         data = users_response.json()
         assert data is not None
         correct_response = {
-            "first_name": user.first_name,
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "is_active": user.is_active,
-            "is_superuser": user.is_superuser,
-            "is_company": user.is_company
+            "first_name": superuser.first_name,
+            "id": superuser.id,
+            "username": superuser.username,
+            "email": superuser.email,
+            "is_active": superuser.is_active,
+            "is_superuser": superuser.is_superuser,
+            "is_company": superuser.is_company
         }
         assert data == correct_response

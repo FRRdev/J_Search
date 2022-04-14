@@ -1,8 +1,11 @@
 import asyncio
-
-from src.config import settings
 import pytest
+
 from tortoise import Tortoise
+
+from src.app.auth.security import get_password_hash
+from src.config import settings
+from src.app.user.models import User
 
 
 async def init_db(db_url, create_db: bool = False, schemas: bool = False) -> None:
@@ -31,3 +34,5 @@ async def initialize_tests():
     await init()
     yield
     await Tortoise._drop_databases()
+
+
