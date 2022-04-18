@@ -35,7 +35,7 @@ DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
 DATABASE_URI_LOCAL = 'postgres://postgres:Zahita183@localhost:5432/useful_test_tortoise'
 DATABASE_URI_TEST = 'postgres://postgres:Zahita183@localhost:5432/test_j_search'
 
-TESTING = False
+#TESTING = False
 
 USERS_OPEN_REGISTRATION = True
 

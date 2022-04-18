@@ -17,6 +17,13 @@ async def create_company(
     return await service.company_s.create(schema, owner_id=user.id)
 
 
+@company_router.get('/', response_model=List[schemas.CompanyFullOut])
+async def get_list_company():
+    """ Create company router
+    """
+    return await service.company_s.all()
+
+
 @company_router.post('/classification', response_model=schemas.GetClassification)
 async def create_classification(
         schema: schemas.CreateClassification,

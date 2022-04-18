@@ -22,7 +22,7 @@ class CompanyFullOut(PydanticModel):
     id: int
     name: str
     create_date: datetime
-    classification_id: int
+    classification: GetClassification
     owner: UserPublic
 
 
