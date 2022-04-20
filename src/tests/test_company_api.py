@@ -75,7 +75,6 @@ async def test_create_company():
         assert company_response.status_code == 200
         assert company_response_data['id'] == 1
         assert company_response_data['name'] == 'someCompany'
-        assert company_response_data['classification_id'] == 1
         assert company_response_data['owner'] == {'first_name': company_user.first_name, 'id': company_user.id}
         company_response_incorrect = await ac.post(
             "/api/v1/company/", json=data, headers={'Authorization': f'Bearer {no_company_user_access_token}'}

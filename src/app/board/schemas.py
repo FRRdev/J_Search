@@ -6,9 +6,9 @@ from tortoise.contrib.pydantic import pydantic_model_creator, PydanticModel
 
 from . import models
 from src.app.user.schemas import UserPublic
-from src.app.company import schemas
+from ..company.schemas import CompanyOut
 
-CreateCategory = pydantic_model_creator(models.Category, exclude_readonly=True)
+CreateCategory = pydantic_model_creator(models.Category, name='create_category', exclude_readonly=True)
 GetCategory = pydantic_model_creator(models.Category, name='get_category')
 
 
@@ -17,7 +17,7 @@ class OutCategory(BaseModel):
     name: str
 
 
-CreateToolkit = pydantic_model_creator(models.Toolkit, exclude_readonly=True)
+CreateToolkit = pydantic_model_creator(models.Toolkit, name='create_toolkit', exclude_readonly=True)
 GetToolkit = pydantic_model_creator(models.Toolkit, name='get_toolkit')
 
 
@@ -26,7 +26,8 @@ class OutToolkit(BaseModel):
     name: str
 
 
-CreateProject = pydantic_model_creator(models.Project, exclude=('user_id',), exclude_readonly=True)
+CreateProject = pydantic_model_creator(models.Project, name='create_project', exclude=('user_id',),
+                                       exclude_readonly=True)
 GetProject = pydantic_model_creator(models.Project, name='get_project')
 
 
@@ -38,6 +39,7 @@ class OutProject(PydanticModel):
     user: UserPublic
     category: OutCategory
     toolkit: OutToolkit
+    company: CompanyOut = None
 
 
 class Category(PydanticModel):

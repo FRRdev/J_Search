@@ -1,5 +1,10 @@
+from typing import Optional
+
+from fastapi import HTTPException
+
 from . import schemas, models
 from ..base.service_base import BaseService
+from ..company.models import Company
 
 
 class CategoryService(BaseService):
@@ -24,6 +29,16 @@ class TaskService(BaseService):
     model = models.Task
     create_schema = schemas.CreateTask
     get_schema = schemas.GetTask
+
+    async def task_create(self, schema: schemas.CreateTask) -> Optional[schemas.GetTask]:
+        abble_to_create = await Company.filter(
+            projects_by_company=schema.project_id, vacancies__offers_by_vacancy__user_id=schema.worker_id
+        ).exists()
+        if not abble_to_create:
+            raise HTTPException(status_code=404, detail='Project and worker not from one company')
+        else:
+            return await super().create(schema)
+
 
 
 class CommentTaskService(BaseService):
