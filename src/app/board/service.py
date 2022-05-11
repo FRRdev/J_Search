@@ -40,7 +40,6 @@ class TaskService(BaseService):
             return await super().create(schema)
 
 
-
 class CommentTaskService(BaseService):
     model = models.CommentTask
     create_schema = schemas.CreateCommentTask

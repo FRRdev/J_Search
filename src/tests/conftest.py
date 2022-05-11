@@ -2,6 +2,8 @@ import asyncio
 import pytest
 
 from tortoise import Tortoise
+from httpx import AsyncClient
+from main import app
 
 from src.app.auth.security import get_password_hash
 from src.config import settings
@@ -36,3 +38,35 @@ async def initialize_tests():
     await Tortoise._drop_databases()
 
 
+@pytest.fixture(scope='session')
+@pytest.mark.asyncio
+async def company_user_token():
+    password = '123'
+    password_hash = get_password_hash(password)
+    company_user = await User.create(
+        username='copmany_test', email='company2@mail.ru', password=password_hash, first_name='ComCorrect',
+        is_active=True, is_superuser=True, is_company=True
+    )
+    data_superuser = {"username": company_user.username, "password": '123'}
+    async with AsyncClient(app=app, base_url="http://localhost") as ac:
+        token_response = await ac.post("/api/v1/auth/login/access-token", data=data_superuser)
+        data = token_response.json()
+        company_user_access_token = data['access_token']
+    return company_user, company_user_access_token
+
+
+@pytest.fixture(scope='session')
+@pytest.mark.asyncio
+async def no_company_user_token():
+    password = '123'
+    password_hash = get_password_hash(password)
+    no_company_user = await User.create(
+        username='no_active_another', email='noact2@mail.ru', password=password_hash, first_name='ErrorUser2',
+        is_active=True, is_superuser=False, is_company=False
+    )
+    data_no_superuser = {"username": no_company_user.username, "password": '123'}
+    async with AsyncClient(app=app, base_url="http://localhost") as ac:
+        token_response = await ac.post("/api/v1/auth/login/access-token", data=data_no_superuser)
+        data = token_response.json()
+        no_company_user_access_token = data['access_token']
+    return no_company_user, no_company_user_access_token
