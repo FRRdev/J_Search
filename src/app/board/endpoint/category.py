@@ -1,6 +1,6 @@
+from fastapi import APIRouter, Depends
 from typing import List
 
-from fastapi import APIRouter, Depends
 from .. import schemas, models, service
 from ...auth.permissions import get_superuser
 
