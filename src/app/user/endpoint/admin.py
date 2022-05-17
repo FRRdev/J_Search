@@ -8,7 +8,7 @@ from src.app.user import models, schemas, service
 admin_router = APIRouter()
 
 
-@admin_router.get('/', response_model=List[schemas.UserPublic])
+@admin_router.get('/', response_model=List[schemas.UserBaseInDB])
 async def get_all_users(user: models.User = Depends(get_superuser)):
     """ Get user"""
     return await service.user_s.all()
