@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.config import settings
@@ -23,6 +24,7 @@ app.add_middleware(
 )
 app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 app.include_router(routers.api_router, prefix=settings.API_V1_STR)
+app.mount("/media", StaticFiles(directory="media"), name="media")
 
 register_tortoise(
     app,
