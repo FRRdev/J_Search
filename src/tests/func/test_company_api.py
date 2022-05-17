@@ -1,59 +1,39 @@
 import pytest
 from httpx import AsyncClient
 from main import app
-from src.app.auth.security import get_password_hash
-from src.app.user.models import User
 
-company_user, no_company_user = User, User
-company_user_access_token, no_company_user_access_token = None, None
+from src.app.company.schemas import GetClassification
+from src.app.company import models
 
 
+@pytest.mark.smoke
 @pytest.mark.asyncio
-async def test_create_company_user():
-    password = '123'
-    password_hash = get_password_hash(password)
-    global company_user
-    company_user = await User.create(
-        username='copmany_test', email='company2@mail.ru', password=password_hash, first_name='ComCorrect',
-        is_active=True, is_superuser=True, is_company=True
-    )
-    password_hash = get_password_hash(password)
-    global no_company_user
-    no_company_user = await User.create(
-        username='no_active_another', email='noact2@mail.ru', password=password_hash, first_name='ErrorUser2',
-        is_active=True, is_superuser=False, is_company=False
-    )
-    data_superuser = {"username": company_user.username, "password": '123'}
-    data_no_superuser = {"username": no_company_user.username, "password": '123'}
-    async with AsyncClient(app=app, base_url="http://localhost") as ac:
-        token_response = await ac.post("/api/v1/auth/login/access-token", data=data_superuser)
-        data = token_response.json()
-        global company_user_access_token
-        company_user_access_token = data['access_token']
-        token_response = await ac.post("/api/v1/auth/login/access-token", data=data_no_superuser)
-        data = token_response.json()
-        global no_company_user_access_token
-        no_company_user_access_token = data['access_token']
-
-
-@pytest.mark.asyncio
-async def test_create_classification():
+async def test_create_classification(company_user_token):
+    company_user, company_user_access_token = company_user_token
     async with AsyncClient(app=app, base_url="http://localhost") as ac:
         example_value = {"name": "IT", }
-        classification_response = await ac.post(
+        classification_it_response = await ac.post(
             "/api/v1/company/classification", headers={'Authorization': f'Bearer {company_user_access_token}'},
             json=example_value
         )
-        assert classification_response.status_code == 200
+        classification_it_obj = await models.Classification.get(name='IT')
+        classification_it_data = await GetClassification.from_tortoise_orm(classification_it_obj)
+        assert classification_it_response.json() == classification_it_data
+        assert classification_it_response.status_code == 200
         example_value = {"name": "Finnance", }
-        await ac.post(
+        classification_fin_response = await ac.post(
             "/api/v1/company/classification", json=example_value,
             headers={'Authorization': f'Bearer {company_user_access_token}'}
         )
+        classification_fin_obj = await models.Classification.get(name='Finnance')
+        classification_fin_data = await GetClassification.from_tortoise_orm(classification_fin_obj)
+        assert classification_fin_response.json() == classification_fin_data
+        assert classification_it_response.status_code == 200
 
 
 @pytest.mark.asyncio
-async def test_list_classification():
+async def test_list_classification(company_user_token):
+    company_user, company_user_access_token = company_user_token
     async with AsyncClient(app=app, base_url="http://localhost") as ac:
         classification_response = await ac.get("/api/v1/company/classification",
                                                headers={'Authorization': f'Bearer {company_user_access_token}'})
@@ -62,7 +42,9 @@ async def test_list_classification():
 
 
 @pytest.mark.asyncio
-async def test_create_company():
+async def test_create_company(company_user_token, no_company_user_token):
+    company_user, company_user_access_token = company_user_token
+    no_company_user, no_company_user_access_token = no_company_user_token
     async with AsyncClient(app=app, base_url="http://localhost") as ac:
         data = {
             "name": "someCompany",
@@ -84,7 +66,9 @@ async def test_create_company():
 
 
 @pytest.mark.asyncio
-async def test_create_address():
+async def test_create_address(company_user_token, no_company_user_token):
+    company_user, company_user_access_token = company_user_token
+    no_company_user, no_company_user_access_token = no_company_user_token
     async with AsyncClient(app=app, base_url="http://localhost") as ac:
         data = {
             "country": "Russia",
@@ -117,7 +101,8 @@ async def test_create_address():
 
 
 @pytest.mark.asyncio
-async def test_list_address():
+async def test_list_address(company_user_token):
+    company_user, company_user_access_token = company_user_token
     async with AsyncClient(app=app, base_url="http://localhost") as ac:
         address_response = await ac.get(
             "/api/v1/company/address", headers={'Authorization': f'Bearer {company_user_access_token}'}
@@ -139,7 +124,8 @@ async def test_list_address():
 
 
 @pytest.mark.asyncio
-async def test_put_address():
+async def test_put_address(company_user_token):
+    company_user, company_user_access_token = company_user_token
     async with AsyncClient(app=app, base_url="http://localhost") as ac:
         data = {
             "country": "USA",
