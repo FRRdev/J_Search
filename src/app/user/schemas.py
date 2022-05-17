@@ -1,5 +1,6 @@
-from typing import Optional, List
+from typing import Optional, List, Union
 
+from fastapi import File, Form, UploadFile
 from pydantic import BaseModel, EmailStr
 from tortoise.contrib.pydantic import pydantic_model_creator
 
@@ -39,7 +40,17 @@ class UserCreateInRegistration(BaseModel):
     email: EmailStr
     password: str
     first_name: str
-    avatar: str = None
+    avatar: Union[UploadFile, str] = None
+
+    @classmethod
+    def as_form(cls,
+                username: str = Form(...),
+                email: EmailStr = Form(...),
+                password: str = Form(...),
+                first_name: str = Form(...),
+                avatar: UploadFile = File(None)
+                ):
+        return cls(username=username, email=email, password=password, first_name=first_name, avatar=avatar)
 
     class Config:
         orm_mode = True

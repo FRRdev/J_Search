@@ -1,10 +1,12 @@
 import jwt
-from jwt import InvalidTokenError
 
+from jwt import InvalidTokenError
 from datetime import datetime, timedelta
 from typing import Optional
+from enum import Enum
+from uuid import uuid4
 
-from fastapi import BackgroundTasks
+from fastapi import BackgroundTasks, UploadFile
 from tortoise.expressions import Q
 
 from .models import Verification
@@ -17,12 +19,24 @@ from .send_email import send_new_account_email
 password_reset_jwt_subject = "preset"
 
 
-async def registration_user(new_user: schemas.UserCreateInRegistration, task: BackgroundTasks) -> bool:
+class UserType(str, Enum):
+    """ Type of user for registration
+    """
+    user = "user"
+    company = "company"
+
+
+async def registration_user(
+        new_user: schemas.UserCreateInRegistration, task: BackgroundTasks, user_type: UserType,
+) -> bool:
     """Регистрация пользователя"""
     if await models.User.filter(Q(username=new_user.username) | Q(email=new_user.email)).exists():
         return True
     else:
-        user = await service.user_s.create_user(new_user)
+        if user_type == UserType.company:
+            user = await service.user_s.create_user(new_user, is_company=True)
+        else:
+            user = await service.user_s.create_user(new_user)
         verify = await Verification.create(user_id=user.id)
         task.add_task(
             send_new_account_email, new_user.email, new_user.username, new_user.password, verify.link
@@ -32,7 +46,7 @@ async def registration_user(new_user: schemas.UserCreateInRegistration, task: Ba
 
 async def verify_registration_user(uuid: VerificationOut) -> bool:
     """ Подтверждение email пользователя """
-    verify = await Verification.get(link=uuid.link).prefetch_related("user")
+    verify = await Verification.get(link=uuid.link).select_related("user")
     if verify:
         await service.user_s.update(
             schema=schemas.UserUpdate(**{"is_active": "true"}), id=verify.user.id

@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Body, Depends, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, HTTPException, BackgroundTasks, Query, Request
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import BackgroundTasks
 
 from src.app.user import schemas, service
 
@@ -13,7 +12,8 @@ from .service import (
     generate_password_reset_token,
     verify_password_reset_token,
     registration_user,
-    verify_registration_user
+    verify_registration_user,
+    UserType
 )
 
 auth_router = APIRouter()
@@ -32,10 +32,13 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @auth_router.post("/registration", response_model=Msg)
-async def user_registration(new_user: schemas.UserCreateInRegistration, task: BackgroundTasks):
-    """ Регистрация пользователя
-    """
-    user = await registration_user(new_user, task)
+async def user_registration(
+        task: BackgroundTasks,
+        new_user: schemas.UserCreateInRegistration = Depends(schemas.UserCreateInRegistration.as_form),
+        user_type: UserType = Query(...),
+):
+    """ Регистрация пользователя"""
+    user = await registration_user(new_user, task, user_type)
     if user:
         raise HTTPException(status_code=400, detail="User already exists")
     else:
