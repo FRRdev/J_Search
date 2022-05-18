@@ -1,27 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
 from .. import schemas, models, service
 from ...auth.permissions import get_superuser, get_company, get_owner_company_by_address
 
 company_router = APIRouter()
-
-
-@company_router.post('/', response_model=schemas.CompanyFullOut)
-async def create_company(
-        schema: schemas.CreateCompany,
-        user: models.User = Depends(get_company)
-):
-    """ Create company router
-    """
-    return await service.company_s.create(schema, owner_id=user.id)
-
-
-@company_router.get('/', response_model=List[schemas.CompanyFullOut])
-async def get_list_company():
-    """ Create company router
-    """
-    return await service.company_s.all()
 
 
 @company_router.post('/classification', response_model=schemas.GetClassification)
@@ -67,3 +50,27 @@ async def get_list_address():
 @company_router.delete('/address/{pk}', status_code=204)
 async def delete_address(pk: int, user: models.User = Depends(get_owner_company_by_address)):
     return await service.address_s.delete(id=pk)
+
+
+@company_router.post('/', response_model=schemas.CompanyFullOut)
+async def create_company(
+        schema: schemas.CreateCompany,
+        user: models.User = Depends(get_company)
+):
+    """ Create company router
+    """
+    return await service.company_s.create(schema, owner_id=user.id)
+
+
+@company_router.get('/', response_model=List[schemas.CompanyFullOut])
+async def get_list_company():
+    """ Create company router
+    """
+    return await service.company_s.all()
+
+
+@company_router.get('/{pk}', response_model=schemas.GetCompany)
+async def get_single_company(pk: int = Path(...)):
+    """ get singe company by pk
+    """
+    return await service.company_s.get(pk=pk)

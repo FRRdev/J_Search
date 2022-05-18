@@ -12,7 +12,7 @@ GetClassification = pydantic_model_creator(models.Classification, name='get_clas
 
 CreateCompany = pydantic_model_creator(models.Company, name='create_company', exclude=('owner_id',),
                                        exclude_readonly=True)
-GetCompany = pydantic_model_creator(models.Company)
+GetCompany = pydantic_model_creator(models.Company, name='get_company')
 
 
 class CompanyOut(BaseModel):

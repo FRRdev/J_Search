@@ -21,6 +21,8 @@ class User(models.Model):
     is_company = fields.BooleanField(default=False)
     avatar = fields.CharField(max_length=100, null=True)
 
+    class PydanticMeta:
+        backward_relations = False
     # async def save(self, *args, **kwargs) -> None:
     #     self.password = get_password_hash(self.password)
     #     await super().create(*args, **kwargs)
