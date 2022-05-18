@@ -43,8 +43,13 @@ async def test_admin_can_get_users():
                                       headers={'Authorization': f'Bearer {superuser_access_token}'})
         data = users_response.json()
         data_must_exist = {
-            'first_name': 'Samick',
+            'first_name': superuser.first_name,
             'id': superuser.id,
+            'username': superuser.username,
+            'email': superuser.email,
+            'is_active': superuser.is_active,
+            'is_superuser': superuser.is_superuser,
+            'is_company': superuser.is_company,
         }
         assert data is not None
         assert data_must_exist in data
