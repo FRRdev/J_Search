@@ -37,7 +37,8 @@ async def user_registration(
         new_user: schemas.UserCreateInRegistration = Depends(schemas.UserCreateInRegistration.as_form),
         user_type: UserType = Query(...),
 ):
-    """ Регистрация пользователя"""
+    """ User_registration
+    """
     user = await registration_user(new_user, task, user_type)
     if user:
         raise HTTPException(status_code=400, detail="User already exists")
@@ -47,6 +48,8 @@ async def user_registration(
 
 @auth_router.post("/confirm-email", response_model=Msg)
 async def confirm_email(uuid: VerificationOut):
+    """ Confirm email to set is_active=True
+    """
     if await verify_registration_user(uuid):
         return {"msg": "Success verify email"}
     else:
