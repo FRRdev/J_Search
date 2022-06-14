@@ -35,7 +35,10 @@ DATABASE_URI = f'postgres://{os.environ.get("POSTGRES_USER")}:' \
 DATABASE_URI_LOCAL = 'postgres://postgres:Zahita183@localhost:5432/useful_test_tortoise'
 DATABASE_URI_TEST = 'postgres://postgres:Zahita183@localhost:5432/test_j_search'
 
-#TESTING = False
+MONGO_DB_URI = 'mongodb://localhost:27017/'
+MONGO_DB_NAME = 'j_note_service'
+
+# TESTING = False
 
 USERS_OPEN_REGISTRATION = True
 
