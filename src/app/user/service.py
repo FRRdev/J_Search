@@ -7,7 +7,7 @@ from tortoise.expressions import Q
 from uuid import uuid4
 
 from . import schemas, models
-from ..base.service_base import BaseService
+from ..base.service_sql_base import BaseService
 from src.app.auth.security import verify_password, get_password_hash
 
 

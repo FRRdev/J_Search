@@ -3,7 +3,7 @@ from typing import Optional
 from tortoise.expressions import Q
 
 from . import schemas, models
-from ..base.service_base import BaseService, CreateSchemaType
+from ..base.service_sql_base import BaseService, CreateSchemaType
 
 from .schemas import VacancyOut
 

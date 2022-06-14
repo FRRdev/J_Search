@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import HTTPException
 
 from . import schemas, models
-from ..base.service_base import BaseService
+from ..base.service_sql_base import BaseService
 from ..company.models import Company
 
 
