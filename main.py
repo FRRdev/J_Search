@@ -1,3 +1,5 @@
+import pymongo
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -33,3 +35,5 @@ register_tortoise(
     # generate_schemas=True,
     add_exception_handlers=True,
 )
+
+
